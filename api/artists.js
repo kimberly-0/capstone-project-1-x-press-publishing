@@ -6,8 +6,22 @@ const artistsRouter = express.Router();
 
 module.exports = artistsRouter;
 
+artistsRouter.param('artistId', (req, res, next, id) => {
+    db.get('SELECT * FROM Artist WHERE id = $id', {
+        $id: Number(id)
+    }, (err, artist) => {
+        if (err) {
+            next(err);
+        } else if (artist) {
+            req.artist = artist;
+            next();
+        } else {
+            res.status(404).send();
+        }
+    });
+});
+
 artistsRouter.get('/', (req, res, next) => {
-    console.log(req.params);
     db.all('SELECT * FROM Artist WHERE is_currently_employed = 1', (err, artists) => {
         if (err) {
             next(err);
@@ -15,4 +29,8 @@ artistsRouter.get('/', (req, res, next) => {
             res.status(200).json({artists: artists});
         }
     });
+});
+
+artistsRouter.get('/:artistId', (req, res, next) => {
+    res.status(200).send({artist: req.artist});
 });
