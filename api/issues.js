@@ -6,6 +6,21 @@ const issuesRouter = express.Router({ mergeParams: true });
 
 module.exports = issuesRouter;
 
+issuesRouter.param('issueId', (req, res, next, id) => {
+    db.get('SELECT * FROM Issue WHERE id = $id', {
+        $id: Number(id)
+    }, (err, issue) => {
+        if (err) {
+            next(err);
+        } else if (issue) {
+            req.issue = issue;
+            next();
+        } else {
+            res.status(404).send();
+        }
+    });
+});
+
 issuesRouter.get('/', (req, res, next) => {
     db.all('SELECT * FROM Issue WHERE series_id = $seriesId', {
         $seriesId: req.series.id
@@ -59,6 +74,32 @@ issuesRouter.post('/', validateIssue, (req, res, next) => {
                 return res.status(500).send();
             }
             res.status(201).send({issue: issue});
+        });
+    });
+});
+
+issuesRouter.put('/:issueId', validateIssue, (req, res, next) => {
+    const newIssue = req.body.issue;    
+    db.run('UPDATE Issue SET name = $name, issue_number = $issueNumber, publication_date = $publicationDate, artist_id = $artistId, series_id = $seriesId WHERE id = $id', {
+        $id: req.issue.id,
+        $name: newIssue.name,
+        $issueNumber: newIssue.issueNumber,
+        $publicationDate: newIssue.publicationDate,
+        $artistId: newIssue.artistId,
+        $seriesId: req.series.id
+    }, (err) => {
+        if (err) {
+            next(err);
+        }
+        db.get('SELECT * FROM Issue WHERE id = $id', {
+            $id: req.issue.id
+        }, (err, issue) => {
+            if (err) {
+                next(err);
+            } else if (!issue) {
+                return res.status(500).send();
+            }
+            res.status(200).send({issue: issue});
         });
     });
 });
