@@ -76,7 +76,7 @@ artistsRouter.put('/:artistId', validateArtist, (req, res, next) => {
         $dateOfBirth: newArtist.dateOfBirth, 
         $biography: newArtist.biography, 
         $isCurrentlyEmployed: newArtist.isCurrentlyEmployed
-    }, function(err) {
+    }, (err) => {
         if (err) {
             next(err);
         }
@@ -96,7 +96,7 @@ artistsRouter.put('/:artistId', validateArtist, (req, res, next) => {
 artistsRouter.delete('/:artistId', (req, res, next) => {
     db.run('UPDATE Artist SET is_currently_employed = 0 WHERE id = $id', {
         $id: req.artist.id,
-    }, function(err) {
+    }, (err) => {
         if (err) {
             next(err);
         }
