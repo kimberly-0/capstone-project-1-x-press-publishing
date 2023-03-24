@@ -38,7 +38,7 @@ artistsRouter.get('/:artistId', (req, res, next) => {
 const validateArtist = (req, res, next) => {
     const toCreateArtist = req.body.artist;
     if (!toCreateArtist.name || !toCreateArtist.dateOfBirth || !toCreateArtist.biography) {
-        res.status(400).send();
+        return res.status(400).send();
     }
     if (!toCreateArtist.isCurrentlyEmployed) {
         req.body.artist.isCurrentlyEmployed = 1;
@@ -47,7 +47,7 @@ const validateArtist = (req, res, next) => {
 };
 
 artistsRouter.post('/', validateArtist, (req, res, next) => {
-    const toCreateArtist = req.body.artist;
+    const toCreateArtist = req.body.artist;    
     db.run('INSERT INTO Artist (name, date_of_birth, biography, is_currently_employed) VALUES ($name, $dateOfBirth, $biography, $isCurrentlyEmployed)', {
         $name: toCreateArtist.name,
         $dateOfBirth: toCreateArtist.dateOfBirth, 
@@ -61,7 +61,7 @@ artistsRouter.post('/', validateArtist, (req, res, next) => {
             $id: this.lastID
         }, (err, artist) => {
             if (!artist) {
-                res.status(500).send();
+                return res.status(500).send();
             }
             res.status(201).send({artist: artist});
         });
