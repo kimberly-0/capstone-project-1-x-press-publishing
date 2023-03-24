@@ -55,7 +55,7 @@ artistsRouter.post('/', validateArtist, (req, res, next) => {
         $isCurrentlyEmployed: toCreateArtist.isCurrentlyEmployed
     }, function(err) {
         if (err) {
-            console.log(err);
+            next(err);
         }
         db.get('SELECT * FROM Artist WHERE id = $id', {
             $id: this.lastID
