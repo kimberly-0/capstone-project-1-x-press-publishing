@@ -1,17 +1,3 @@
-*This project is part of a Codecademy course.*
-
-## Get started
-
-1. Install [Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) if not already installed
-2. Clone the repository with `git clone https://github.com/kidijkmans/capstone-project-1-x-press-publishing.git`
-3. In terminal, navigate to project folder
-4. Install dependencies with `npm install`
-5. Create database with `node migration.js`
-6. Insert mock data with `node seed.js`
-7. Start server with `npm start`
-8. Open **index.html** in a browser to view the app
-9. Stop running app with `ctrl+c`
-
 # X-Press Publishing
 
 ## Project Overview
