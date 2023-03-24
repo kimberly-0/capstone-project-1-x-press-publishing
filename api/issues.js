@@ -103,3 +103,14 @@ issuesRouter.put('/:issueId', validateIssue, (req, res, next) => {
         });
     });
 });
+
+issuesRouter.delete('/:issueId', (req, res, next) => {
+    db.run('DELETE FROM Issue WHERE id = $id', {
+        $id: req.issue.id,
+    }, (err) => {
+        if (err) {
+            next(err);
+        }
+        res.status(204).send();
+    });
+});
