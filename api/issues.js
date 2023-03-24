@@ -38,19 +38,7 @@ const validateIssue = (req, res, next) => {
     if (!toCreateIssue.name || !toCreateIssue.issueNumber || !toCreateIssue.publicationDate || !toCreateIssue.artistId) {
         return res.status(400).send();
     }
-    // Check if artist exists
-    db.get('SELECT * FROM Artist WHERE id = $id', {
-        $id: toCreateIssue.artistId
-    }, (err, artist) => {
-        if (err) {
-            next(err);
-        } else if (artist) {
-            req.artist = artist;
-            next();
-        } else {
-            res.status(400).send();
-        }
-    });
+    next();
 };
 
 issuesRouter.post('/', validateIssue, (req, res, next) => {
