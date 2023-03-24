@@ -10,3 +10,5 @@ apiRouter.use('/artists', artistsRouter);
 const seriesRouter = require('./series');
 apiRouter.use('/series', seriesRouter);
 
+const issuesRouter = require('./issues');
+seriesRouter.use('/:seriesId/issues', issuesRouter);
