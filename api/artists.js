@@ -92,3 +92,23 @@ artistsRouter.put('/:artistId', validateArtist, (req, res, next) => {
         });
     });
 });
+
+artistsRouter.delete('/:artistId', (req, res, next) => {
+    db.run('UPDATE Artist SET is_currently_employed = 0 WHERE id = $id', {
+        $id: req.artist.id,
+    }, function(err) {
+        if (err) {
+            next(err);
+        }
+        db.get('SELECT * FROM Artist WHERE id = $id', {
+            $id: req.artist.id
+        }, (err, artist) => {
+            if (err) {
+                next(err);
+            } else if (!artist || artist.is_currently_employed !== 0) {
+                return res.status(400).send();
+            } 
+            res.status(200).send({artist: artist});
+        });
+    });
+});
