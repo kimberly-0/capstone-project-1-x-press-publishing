@@ -67,3 +67,26 @@ seriesRouter.post('/', validateSeries, (req, res, next) => {
         });
     });
 });
+
+seriesRouter.put('/:seriesId', validateSeries, (req, res, next) => {
+    const newSeries = req.body.series;    
+    db.run('UPDATE Series SET name = $name, description = $description WHERE id = $id', {
+        $id: req.series.id,
+        $name: newSeries.name,
+        $description: newSeries.description
+    }, function(err) {
+        if (err) {
+            next(err);
+        }
+        db.get('SELECT * FROM Series WHERE id = $id', {
+            $id: req.series.id
+        }, (err, series) => {
+            if (err) {
+                next(err);
+            } else if (!series) {
+                return res.status(500).send();
+            }
+            res.status(200).send({series: series});
+        });
+    });
+});
