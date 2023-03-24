@@ -5,9 +5,6 @@ const db = new sqlite3.Database(process.env.TEST_DATABASE || './database.sqlite'
 const seriesRouter = express.Router();
 module.exports = seriesRouter;
 
-const issuesRouter = require('./issues');
-seriesRouter.use('/:seriesId/issues', issuesRouter);
-
 seriesRouter.param('seriesId', (req, res, next, id) => {
     db.get('SELECT * FROM Series WHERE id = $id', {
         $id: Number(id)
