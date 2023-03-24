@@ -5,3 +5,15 @@ const db = new sqlite3.Database(process.env.TEST_DATABASE || './database.sqlite'
 const issuesRouter = express.Router({ mergeParams: true });
 
 module.exports = issuesRouter;
+
+issuesRouter.get('/', (req, res, next) => {
+    db.all('SELECT * FROM Issue WHERE series_id = $seriesId', {
+        $seriesId: req.series.id
+    }, (err, issues) => {
+        if (err) {
+            next(err);
+        } else {
+            res.status(200).json({issues: issues});
+        }
+    });
+});
