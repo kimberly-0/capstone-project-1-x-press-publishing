@@ -37,7 +37,6 @@ seriesRouter.get('/:seriesId', (req, res, next) => {
     res.status(200).send({series: req.series});
 });
 
-
 const validateSeries = (req, res, next) => {
     const toCreateSeries = req.body.series;
     if (!toCreateSeries.name || !toCreateSeries.description) {
@@ -74,7 +73,7 @@ seriesRouter.put('/:seriesId', validateSeries, (req, res, next) => {
         $id: req.series.id,
         $name: newSeries.name,
         $description: newSeries.description
-    }, function(err) {
+    }, (err) => {
         if (err) {
             next(err);
         }
@@ -88,5 +87,30 @@ seriesRouter.put('/:seriesId', validateSeries, (req, res, next) => {
             }
             res.status(200).send({series: series});
         });
+    });
+});
+
+const ensureSeriesHasNoIssues = (req, res, next) => {
+    const toDeleteSeries = req.series;
+    db.all('SELECT * FROM Issue WHERE series_id = $seriesId', {
+        $seriesId: toDeleteSeries.id
+    }, (err, issues) => {
+        if (err) {
+            next(err);
+        } else if (issues.length > 0) {
+            return res.status(400).send();
+        }
+        next();
+    });
+};
+
+seriesRouter.delete('/:seriesId', ensureSeriesHasNoIssues, (req, res, next) => {
+    db.run('DELETE FROM Series WHERE id = $id', {
+        $id: req.series.id,
+    }, (err) => {
+        if (err) {
+            next(err);
+        }
+        res.status(204).send();
     });
 });
